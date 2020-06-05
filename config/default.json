@@ -1,0 +1,3 @@
+{
+    "mongoURI": "mongodb+srv://rtech:gtech123@rpcluster-9jne9.mongodb.net/techhunt?retryWrites=true&w=majority"
+}
