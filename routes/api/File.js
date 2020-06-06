@@ -19,8 +19,15 @@ const upload = multer({
       }
 });
 
+var lockedupload;
 router.post('/', upload.single('file'), function (req, res) {
-  
+
+  if (lockedupload) {
+    return res.status(401).json({ message: 'Please wait a few seconds.' })
+  }
+  else {
+    lockedupload = true;
+
     try {
 
       const fileRows = [];
@@ -44,7 +51,7 @@ router.post('/', upload.single('file'), function (req, res) {
         parser.end();
       })
       .on('data', function (data) {
-          if (data.id == '' || data.login == '' || data.name == '' || data.salary == '') {
+          if (!data.id || !data.login || !data.name || !data.salary) {
             err = new Error("Upload failed. Some field are empty.");
             parser.end();
           }
@@ -122,6 +129,7 @@ router.post('/', upload.single('file'), function (req, res) {
             .then((result) => {
               //console.log(successcount, errorcount);
               fs.unlinkSync(req.file.path);   // remove temp file
+              lockedupload = false;
               return res.status(200).json({ message: `Upload successful. ${successcount} updated, ${errorcount} not updated.` })
             })
             .catch(err => { 
@@ -135,7 +143,8 @@ router.post('/', upload.single('file'), function (req, res) {
       console.log(err);
       return res.status(400).json({ error: "Upload failed. Only csv file is allowed." });
     }
-    });
+  }
+ });
 
     
 

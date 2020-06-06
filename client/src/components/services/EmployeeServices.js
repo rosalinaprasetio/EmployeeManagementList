@@ -8,7 +8,17 @@ const http = axios.create({
   });
 
 const getAll = () => {
-  return http.get("http://localhost:4000/users");
+  return http.get("http://localhost:4000/users?minSalary=0&maxSalary=9999999999&offset=0&sort=+id");
+};
+
+const getPagination = (page, rowsperpage, sort) => {
+  return http.get("http://localhost:4000/paginate", {
+    params: {
+      page: page,
+      rowsperpage: rowsperpage,
+      sort: sort
+    }
+  });
 };
 /*
 const get = id => {
@@ -36,5 +46,6 @@ const findByTitle = title => {
 };
 */
 export default {
-  getAll
+  getAll,
+  getPagination
 };
