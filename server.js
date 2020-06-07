@@ -22,6 +22,7 @@ mongoose.connect(db, { useUnifiedTopology: true, useNewUrlParser: true, useCreat
 });
 
 //route url
+app.use('/user', require('./routes/api/User'));
 app.use('/users', require('./routes/api/Users'));
 app.use('/users/upload', require('./routes/api/File'));
 app.use('/paginate', require('./routes/api/Paginate'));

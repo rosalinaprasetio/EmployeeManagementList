@@ -13,137 +13,155 @@ const upload = multer({
     dest: 'tmp/csv/',
     fileFilter: (req, file, cb) => {
         if (file.mimetype !== 'text/csv') {
-          return cb(null, false, new Error("Only csv file is allowed"));
+          return cb(null, false, new Error("Only csv file is allowed."));
         }
         cb(null, true);
       }
-});
+}).single('file');
 
 var lockedupload;
-router.post('/', upload.single('file'), function (req, res) {
+router.post('/', function (req, res) {    
+  upload(req, res, function (err) {
+    if (err instanceof multer.MulterError) {
+      fs.unlinkSync(req.file.path);   // remove temp file
+      lockedupload = false;
+      return res.status(400).json({ error: err });
+    } else if (err) {
+      fs.unlinkSync(req.file.path);   // remove temp file
+      lockedupload = false;
+      return res.status(400).json({ error: err });
+    }
+      
+    if (lockedupload) {
+      fs.unlinkSync(req.file.path);   // remove temp file
+      return res.status(401).json({ error: 'Another file has been uploaded. Please wait a few seconds.' })
+    }
+    else {
+      lockedupload = true;
 
-  if (lockedupload) {
-    return res.status(401).json({ message: 'Please wait a few seconds.' })
-  }
-  else {
-    lockedupload = true;
+      try {
 
-    try {
+        const fileRows = [];
+        let err;
+        const rowid = [];
+        const rowlogin = [];
 
-      const fileRows = [];
-      let err;
-      const rowid = [];
-      const rowlogin = [];
+        let parser = csv.parse({ 
+          headers: true,
+          ignoreEmpty: true,
+          comment: '#',
+          strictColumnHandling: true,
+          trim: true
+        });
 
-      let parser = csv.parse({ 
-        headers: true,
-        ignoreEmpty: true,
-        comment: '#',
-        strictColumnHandling: true,
-        trim: true
-      });
-
-      fs.createReadStream(req.file.path)
-      .pipe(parser)
-      .on('error', (error) => console.error(error))
-      .on('data-invalid', function(data){ 
-        err = new Error("Upload failed. Some field are mismatch.");
-        parser.end();
-      })
-      .on('data', function (data) {
-          if (!data.id || !data.login || !data.name || !data.salary) {
-            err = new Error("Upload failed. Some field are empty.");
-            parser.end();
-          }
-
-          if (isNaN(Number(data.salary))) {
-            err = new Error("Upload failed. Some salary field have incorrect format.");
-            parser.end();
-          }
-          else if (Number(data.salary) < 0) {
-              err = new Error("Upload failed. Some salary field have incorrect value (value should > 0).");
+        fs.createReadStream(req.file.path)
+        .pipe(parser)
+        .on('error', (error) => console.error(error))
+        .on('data-invalid', function(data){ 
+          err = new Error("Upload failed. Some field are mismatch.");
+          parser.end();
+        })
+        .on('data', function (data) {
+            if (!data.id || !data.login || !data.name || !data.salary) {
+              err = new Error("Upload failed. Some field are empty.");
               parser.end();
-          }
-
-          if (!rowid[data.id]) {
-            rowid[data.id] = 1;
-          }
-          else {
-            err = new Error("Upload failed. Duplicated employee id.");
-            parser.end();
-          }
-
-          if (!rowlogin[data.login]) {
-            rowlogin[data.login] = 1;
-          }
-          else {
-            err = new Error("Upload failed. Duplicated employee login.");
-            parser.end();
-          }
-
-          fileRows.push(data); // push each row  
-      })
-      .on('end', function () {
-          if (!err) {
-            if (fileRows.length == 0) {
-              err = new Error("Upload failed. File empty.")
-            }
-          }
-
-          if (err) {
-            fs.unlinkSync(req.file.path);   // remove temp file
-            return res.status(400).json({ error: err.message });
-          }
-          else {
-            //console.log(fileRows);
-
-            //save to db
-            var errormessage = '';
-            var successcount = 0;
-            var errorcount = 0;
-
-            function saveUpdate(obj) {
-                return new Promise((resolve, reject) => {
-                  var query = { id: obj.id },
-                  update = { login: obj.login, name: obj.name, salary: obj.salary },
-                  options = { new:true, upsert: true };
-
-                  Employee.findOneAndUpdate(query, update, options)
-                    .then(result => {
-                      successcount += 1;
-                      resolve(result);
-                    })
-                    .catch(err => {
-                      errorcount += 1;
-                      resolve();
-                    })
-                  });
             }
 
-            let promiseArr = [];
-            for (let i = 0; i < fileRows.length; i++) {
-              promiseArr.push(saveUpdate(fileRows[i]));
+            if (isNaN(Number(data.salary))) {
+              err = new Error("Upload failed. Some salary field have incorrect format.");
+              parser.end();
+            }
+            else if (Number(data.salary) < 0) {
+                err = new Error("Upload failed. Some salary field have incorrect value (value should >= 0).");
+                parser.end();
             }
 
-            Promise.all(promiseArr)
-            .then((result) => {
-              //console.log(successcount, errorcount);
+            if (!rowid[data.id]) {
+              rowid[data.id] = 1;
+            }
+            else {
+              err = new Error("Upload failed. Duplicated employee id.");
+              parser.end();
+            }
+
+            if (!rowlogin[data.login]) {
+              rowlogin[data.login] = 1;
+            }
+            else {
+              err = new Error("Upload failed. Duplicated employee login.");
+              parser.end();
+            }
+
+            fileRows.push(data); // push each row  
+        })
+        .on('end', function () {
+            if (!err) {
+              if (fileRows.length == 0) {
+                err = new Error("Upload failed. File empty.")
+              }
+            }
+
+            if (err) {
               fs.unlinkSync(req.file.path);   // remove temp file
               lockedupload = false;
-              return res.status(200).json({ message: `Upload successful. ${successcount} updated, ${errorcount} not updated.` })
-            })
-            .catch(err => { 
-              console.log(err);
-            })
+              return res.status(400).json({ error: err.message });
+            }
+            else {
+              //console.log(fileRows);
 
-          }
-      })
+              //save to db
+              var errormessage = '';
+              var successcount = 0;
+              var errorcount = 0;
+
+              function saveUpdate(obj) {
+                  return new Promise((resolve, reject) => {
+                    var query = { id: obj.id },
+                    update = { login: obj.login, name: obj.name, salary: obj.salary },
+                    options = { new:true, upsert: true };
+
+                    Employee.findOneAndUpdate(query, update, options)
+                      .then(result => {
+                        successcount += 1;
+                        resolve(result);
+                      })
+                      .catch(err => {
+                        errorcount += 1;
+                        resolve();
+                      })
+                    });
+              }
+
+              let promiseArr = [];
+              for (let i = 0; i < fileRows.length; i++) {
+                promiseArr.push(saveUpdate(fileRows[i]));
+              }
+
+              Promise.all(promiseArr)
+              .then((result) => {
+                //console.log(successcount, errorcount);
+                fs.unlinkSync(req.file.path);   // remove temp file
+                lockedupload = false;
+                return res.status(200).json({ message: `Upload successful. ${successcount} updated, ${errorcount} not updated.` })
+              })
+              .catch(err => { 
+                //console.log(err);
+                fs.unlinkSync(req.file.path);   // remove temp file
+                lockedupload = false;
+                return res.status(400).json({ error: "Upload failed. Database error." });
+              })
+
+            }
+        })
+      }
+      catch(err) {
+        //console.log(err);
+        fs.unlinkSync(req.file.path);   // remove temp file
+        lockedupload = false;
+        return res.status(400).json({ error: "Upload failed. Only csv file is allowed." });
+      }
     }
-    catch(err) {
-      console.log(err);
-      return res.status(400).json({ error: "Upload failed. Only csv file is allowed." });
-    }
-  }
+  })
  });
 
     
