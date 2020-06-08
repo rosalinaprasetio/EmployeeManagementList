@@ -62,8 +62,18 @@ router.post('/', function (req, res) {
           parser.end();
         })
         .on('data', function (data) {
-            if (!data.id || !data.login || !data.name || !data.salary) {
+            if (data.id === "" || data.login === "" || data.name === "" || data.salary === "") {
               err = new Error("Upload failed. Some field are empty.");
+              parser.end();
+            }
+
+            if (!(/^[a-z0-9]+$/i.test(data.id))) {
+              err = new Error("Upload failed. Some id field is not alphanumeric.");
+              parser.end();
+            }
+
+            if (!(/^[a-z0-9]+$/i.test(data.login))) {
+              err = new Error("Upload failed. Some login field is not alphanumeric.");
               parser.end();
             }
 
@@ -164,34 +174,4 @@ router.post('/', function (req, res) {
   })
  });
 
-    
-
-/*
-    function checkCSVData(rows) {
-        if (rows.length == 0) {
-            return 'File Empty';
-        }
-    
-        for (let i = 0; i < rows.length; i++) {
-          const rowError = checkCSVRow(rows[i]);
-          if (rowError) {
-            return `${rowError} on row ${i + 1}`
-          }
-        }
-        return;
-      }
-    
-      function checkCSVRow(row) {
-        if (!row[0]) {
-          return "invalid name"
-        }
-        else if (!Number.isInteger(Number(row[1]))) {
-          return "invalid roll number"
-        }
-        else if (!moment(row[2], "YYYY-MM-DD").isValid()) {
-          return "invalid date of birth"
-        }
-        return;
-      }
-*/
 module.exports = router;

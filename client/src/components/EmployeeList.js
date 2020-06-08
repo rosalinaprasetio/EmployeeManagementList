@@ -1,10 +1,21 @@
 import React, { useState, useEffect } from "react";
 import EmployeeServices from "./services/EmployeeServices";
 import PropTypes from 'prop-types';
-import { makeStyles } from '@material-ui/core/styles';
-import { TableSortLabel, Table, TableHead, TableBody, TableCell, TableContainer, TableFooter, 
-  TablePagination, TableRow, Paper, Typography, TextField, Button, InputAdornment } from '@material-ui/core';
-import Menubar from './Menubar.js'
+import { makeStyles, withStyles, useTheme } from '@material-ui/core/styles';
+import Alert from '@material-ui/lab/Alert';
+import PeopleAltIcon from '@material-ui/icons/PeopleAlt';
+import LibraryAddIcon from '@material-ui/icons/LibraryAdd';
+import EditIcon from '@material-ui/icons/Edit';
+import CloseIcon from '@material-ui/icons/Close';
+import DeleteIcon from '@material-ui/icons/Delete';
+import MuiDialogTitle from '@material-ui/core/DialogTitle';
+import { TableSortLabel, Table, TableHead, TableBody, TableCell, TableContainer, TableFooter, FormLabel,
+  TablePagination, TableRow, Paper, Typography, TextField, Button, InputAdornment, IconButton,
+  Dialog, useMediaQuery, Snackbar } from '@material-ui/core';
+import Menubar from './Menubar'
+import EditEmployee from './EditEmployee';
+import AddEmployee from './AddEmployee';
+import DeleteEmployee from './DeleteEmployee';
 
 const headCells = [
   { id: 'id', numeric: false, disablePadding: false, label: 'ID' },
@@ -67,9 +78,14 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(3)
   },
   table: {
-    minWidth: 500,
+    minWidth: 400,
   },
   title: {
+    display:'flex',
+    alignItems: 'center',
+    marginBottom:20
+  },
+  info: {
     marginBottom:20
   },
   visuallyHidden: {
@@ -84,40 +100,104 @@ const useStyles = makeStyles((theme) => ({
     width: 1,
   },
   form: {
+    marginBottom:20,
     '& > *': {
       margin: theme.spacing(1),
       width: '25ch',
     },
   },
+  action: {
+    display: 'flex'
+  },
+  actionlink: {
+    padding: 0,
+    paddingRight:10
+  },
+  
 }));
+
+const styles = (theme) => ({
+  dialogtitle: {
+    margin: 0,
+    padding: theme.spacing(3),
+  },
+  closeButton: {
+    position: 'absolute',
+    right: theme.spacing(1),
+    top: theme.spacing(1),
+    color: theme.palette.grey[500],
+  },
+});
+
+const DialogTitle = withStyles(styles)((props) => {
+  const { children, classes, onClose, ...other } = props;
+  return (
+    <MuiDialogTitle disableTypography className={classes.dialogtitle} {...other}>
+      <Typography variant="h6">{children}</Typography>
+      {onClose ? (
+        <IconButton aria-label="close" className={classes.closeButton} onClick={onClose}>
+          <CloseIcon />
+        </IconButton>
+      ) : null}
+    </MuiDialogTitle>
+  );
+});
 
 
 const EmployeeList = () => {
   const classes = useStyles();
+  const [open, setOpen] = useState(false);
   const [employees, setEmployees] = useState([]);
-  const [rowsPerPage, setRowsPerPage] = useState(2);
+  const [rowsPerPage, setRowsPerPage] = useState(30);
   const [page, setPage] = useState(0);
   const [totalemployee, setTotalemployee] = useState(0);
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState('id');
   const [sort, setSort] = React.useState('id');
-  const [minSalary, setMinSalary] = useState();
-  const [maxSalary, setMaxSalary] = useState();
+  const [minSalary, setMinSalary] = useState('');
+  const [maxSalary, setMaxSalary] = useState('');
   const [errorMinSalary, setErrorMinSalary] = useState();
   const [errorMaxSalary, setErrorMaxSalary] = useState();
+  const [clickAction, setClickAction] = useState();
+  const [clickParam, setClickParam] = useState();
+  const [snackOpen, setSnackOpen] = useState(false);
+  const [snackMessage, setSnackMessage] = useState();
+
+  const resptheme = useTheme();
+  const fullScreen = useMediaQuery(resptheme.breakpoints.down('xs'));
 
   useEffect(() => {
     retrieveEmployee();
   }, []);
 
   const retrieveEmployee = async () => {
-    const response = await EmployeeServices.getPagination(page, rowsPerPage, sort)
+    const response = await EmployeeServices.getPagination(page, rowsPerPage, sort, minSalary, maxSalary)
     setEmployees(response.data.docs);
     setTotalemployee(response.data.totalDocs)
   };
 
+  const handleClickOpen = (action, param) => {
+    setOpen(true);
+    setClickAction(action);
+    setClickParam(param);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+    setClickAction();
+    setClickParam();
+  };
+
+  const handleSnackClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setSnackOpen(false);
+  };
+
   const handleChangePage = async (event, newPage) => {
-    const response = await EmployeeServices.getPagination(newPage, rowsPerPage, sort)
+    const response = await EmployeeServices.getPagination(newPage, rowsPerPage, sort, minSalary, maxSalary)
     setEmployees(response.data.docs);
     setTotalemployee(response.data.totalDocs)
     setPage(newPage);
@@ -139,7 +219,7 @@ const EmployeeList = () => {
       nextsort = '-'+property
     }
 
-    const response = await EmployeeServices.getPagination(0, rowsPerPage, nextsort)
+    const response = await EmployeeServices.getPagination(0, rowsPerPage, nextsort, minSalary, maxSalary)
     setEmployees(response.data.docs);
     setTotalemployee(response.data.totalDocs)
     setPage(0);
@@ -150,35 +230,126 @@ const EmployeeList = () => {
 
   const handleChangeMinSalary = (e) => {
     const value = e.target.value;
-    if (isNaN(Number(value))) {
-      setErrorMinSalary('Incorrect Format.');
-    }
-    else if (Number(value) < 0) {
-      setErrorMinSalary('Value should >= 0.0');
-    }
-    else if (maxSalary && value > maxSalary) {
-      setErrorMinSalary('Value should be <= Max Salary.');
+    if (value) {
+      if (isNaN(Number(value))) {
+        setErrorMinSalary('Incorrect Format.');
+      }
+      else if (Number(value) < 0) {
+        setErrorMinSalary('Value should >= 0.0');
+      }
+      else if (maxSalary) {
+        if (Number(value) > Number(maxSalary)) {
+          setErrorMinSalary('Value should be <= Max Salary.');
+        }
+        else if (Number(value) <= Number(maxSalary)) {
+          setErrorMaxSalary();
+          setErrorMinSalary(); 
+        }
+        else {
+          setErrorMinSalary();        
+        }
+      }
+      else {
+        setErrorMinSalary();
+      }
+      setMinSalary(value.toString());
     }
     else {
       setErrorMinSalary();
-      setMinSalary(value);
+      setMinSalary('');
+
+      if (maxSalary) {
+        if (!isNaN(Number(maxSalary)) && Number(maxSalary) >= 0) {
+          setErrorMaxSalary();
+        }
+      }
     }
   }
 
   const handleChangeMaxSalary = (e) => {
     const value = e.target.value;
-    if (isNaN(Number(value))) {
-      setErrorMaxSalary('Incorrect Format.');
+    if (value) {
+      if (isNaN(Number(value))) {
+        setErrorMaxSalary('Incorrect Format.');
+      }
+      else if (Number(value) < 0) {
+        setErrorMaxSalary('Value should >= 0.0');
+      }
+      else if (minSalary) {
+        if (Number(value) < Number(minSalary)) {
+          setErrorMaxSalary('Value should be >= Min Salary.');
+        }
+        else if (Number(value) >= Number(minSalary)) {
+          setErrorMaxSalary();
+          setErrorMinSalary(); 
+        }
+        else {
+          setErrorMaxSalary();        
+        }
+      }
+      else {
+        setErrorMaxSalary();
+      }
+      setMaxSalary(value.toString());
     }
-    else if (Number(value) < 0) {
-      setErrorMaxSalary('Value should >= 0.0');
+    else { 
+      setErrorMaxSalary();
+      setMaxSalary('');
+
+      if (minSalary) {
+        if (!isNaN(Number(minSalary)) && Number(minSalary) >= 0) {
+          setErrorMinSalary();
+        }
+      }
+      
     }
-    else if (minSalary && value < minSalary) {
-      setErrorMaxSalary('Value should be >= Min Salary.');
+  }
+
+  const handleSubmitSalary = async (e) => {
+    e.preventDefault();
+
+    if (!errorMinSalary && !errorMaxSalary) { 
+      const response = await EmployeeServices.getPagination(0, rowsPerPage, sort, minSalary, maxSalary)
+      setEmployees(response.data.docs);
+      setTotalemployee(response.data.totalDocs)
+      setPage(0);
+    }
+  }
+
+  const handleEditSubmit = async (id) => {
+    const response = await EmployeeServices.getPagination(page, rowsPerPage, sort, minSalary, maxSalary)
+    setEmployees(response.data.docs);
+    setTotalemployee(response.data.totalDocs);
+    handleClose();
+    setSnackMessage(`${id} has been updated`);
+    setSnackOpen(true);
+  }
+
+  const handleCreateSubmit = async (id) => {
+    const response = await EmployeeServices.getPagination(page, rowsPerPage, sort, minSalary, maxSalary)
+    setEmployees(response.data.docs);
+    setTotalemployee(response.data.totalDocs);
+    handleClose();
+    setSnackMessage(`${id} has been created`);
+    setSnackOpen(true);
+  }
+
+  const handleDeleteSubmit = async (status, id) => {
+    if (status === 'cancel') {
+      handleClose();
     }
     else {
-      setErrorMaxSalary();
-      setMaxSalary(value);
+      var newPage = page;
+      if (employees.length < 2 && page > 0) {
+        newPage = page-1;
+      }
+      const response = await EmployeeServices.getPagination(newPage, rowsPerPage, sort, minSalary, maxSalary)
+      setEmployees(response.data.docs);
+      setTotalemployee(response.data.totalDocs);
+      setPage(newPage);
+      handleClose();
+      setSnackMessage(`${id} has been deleted`);
+      setSnackOpen(true);
     }
   }
 
@@ -188,10 +359,19 @@ const EmployeeList = () => {
       <main className={classes.content}>
         <div className={classes.toolbar} />
         <Typography variant="h6" noWrap className={classes.title}>
-          Employee List
+          <PeopleAltIcon />&nbsp;Employee List&nbsp;
+          <IconButton onClick={() => handleClickOpen('add')} >
+            <LibraryAddIcon style={{ color: '#000080' }}/>
+          </IconButton>
         </Typography>
-        <form className={classes.form} noValidate autoComplete="off">
-          Search By:
+        <Alert severity="info" className={classes.info}>
+          <div>To add employee, click plus sign above.</div>
+          <div>To search by minimum salary, add decimal number in "Min Salary" and click Submit.</div>
+          <div>To search by maximum salary, add decimal number in "Max Salary" and click Submit.</div>
+          <div>To search by all salary, clear the decimal number in "Min Salary" and "Max Salary" and click Submit</div>
+        </Alert>
+        <form className={classes.form} noValidate autoComplete="off" onSubmit={handleSubmitSalary}>
+          <FormLabel component="legend">Search By:</FormLabel>
           <TextField error={errorMinSalary ? true : false} size="small" 
             color="primary" id='min-salary' label="Min Salary" value={minSalary}
             InputProps={{startAdornment: (<InputAdornment position="start">$</InputAdornment>)}}
@@ -200,7 +380,7 @@ const EmployeeList = () => {
             color="primary" id='max-salary' label="Max Salary" value={maxSalary}
             InputProps={{startAdornment: (<InputAdornment position="start">$</InputAdornment>)}}
             variant="outlined" helperText={errorMaxSalary} onChange={handleChangeMaxSalary} />
-          <Button size="medium" variant="contained" color="primary" >Submit</Button>
+          <Button type="submit" size="medium" variant="contained" color="primary" >Submit</Button>
         </form>
         <TableContainer component={Paper}>
           <Table
@@ -231,7 +411,14 @@ const EmployeeList = () => {
                     {row.salary}
                   </TableCell>
                   <TableCell style={{ width: 160 }}>
-                    Edit&nbsp;Delete
+                    <div className={classes.action}>
+                      <IconButton onClick={() => handleClickOpen('edit',row.id)} className={classes.actionlink}>
+                        <EditIcon fontSize="small" />
+                      </IconButton>
+                      <IconButton onClick={() => handleClickOpen('delete',row.id)} className={classes.actionlink}>
+                        <DeleteIcon fontSize="small" />
+                      </IconButton>
+                    </div>
                   </TableCell>
                 </TableRow>
               ))}
@@ -261,8 +448,26 @@ const EmployeeList = () => {
           </Table>
         </TableContainer>  
       </main>
+      <Dialog fullScreen={fullScreen} open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
+        <DialogTitle id="customized-dialog-title" onClose={handleClose}>
+          {(clickAction === 'edit') ? 'Edit' : ((clickAction === 'add') ? 'Add' : 'Delete')} Employee
+        </DialogTitle>
+        {
+          (clickAction === 'edit') ? (<EditEmployee employeeid={clickParam} handleEditSubmit={handleEditSubmit} />) : 
+          ((clickAction === 'add') ? (<AddEmployee handleCreateSubmit={handleCreateSubmit} />) : 
+          (<DeleteEmployee employeeid={clickParam} handleDeleteSubmit={handleDeleteSubmit} />))
+          
+        }
+      
+      </Dialog>
+      <Snackbar open={snackOpen} autoHideDuration={3000} key={'top center'}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center'}} onClose={handleSnackClose}>
+        <Alert onClose={handleSnackClose} variant="filled" elevation={6} severity="success">
+          {snackMessage}
+        </Alert>
+      </Snackbar>
     </div>
-     
+    
   );
 };
 

@@ -2,8 +2,9 @@ import React from 'react'
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import { Divider, Drawer, Hidden, List, ListItem, ListItemIcon, 
   ListItemText, Toolbar, IconButton, Typography, AppBar } from '@material-ui/core';
-import InboxIcon from '@material-ui/icons/MoveToInbox';
 import MenuIcon from '@material-ui/icons/Menu';
+import HomeIcon from '@material-ui/icons/Home';
+import PublishIcon from '@material-ui/icons/Publish';
 
 const drawerWidth = 240;
 const useStyles = makeStyles((theme) => ({
@@ -11,7 +12,7 @@ root: {
     display: 'flex',
 },
 drawer: {
-    [theme.breakpoints.up('sm')]: {
+    [theme.breakpoints.up('md')]: {
     width: drawerWidth,
     flexShrink: 0,
     },
@@ -22,7 +23,7 @@ appBar: {
 },
 menuButton: {
     marginRight: theme.spacing(2),
-    [theme.breakpoints.up('sm')]: {
+    [theme.breakpoints.up('md')]: {
     display: 'none',
     },
 },
@@ -75,14 +76,14 @@ const Menubar = () => {
           <Divider />
           <List>
             <ListItemLink href="/">
-              <ListItemIcon><InboxIcon /></ListItemIcon>
+              <ListItemIcon><HomeIcon /></ListItemIcon>
               <ListItemText primary="Home" />
             </ListItemLink>
           </List>
           <Divider />
           <List>
             <ListItemLink href="/upload">
-              <ListItemIcon><InboxIcon /></ListItemIcon>
+              <ListItemIcon><PublishIcon /></ListItemIcon>
               <ListItemText primary="Upload CSV" />
             </ListItemLink>
           </List>
@@ -108,9 +109,9 @@ const Menubar = () => {
             </Typography>
             </Toolbar>
         </AppBar>
-        <nav className={classes.drawer} aria-label="mailbox folders">
+        <nav className={classes.drawer} aria-label="menu">
             {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
-            <Hidden smUp implementation="css">
+            <Hidden mdUp implementation="css">
             <Drawer
                 
                 variant="temporary"
@@ -127,7 +128,7 @@ const Menubar = () => {
                 {drawer}
             </Drawer>
             </Hidden>
-            <Hidden xsDown implementation="css">
+            <Hidden smDown implementation="css">
             <Drawer
                 classes={{
                 paper: classes.drawerPaper,

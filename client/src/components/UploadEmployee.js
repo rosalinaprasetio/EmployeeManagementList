@@ -1,11 +1,9 @@
-import React, { useState, useEffect } from "react";
-import UploadFile from "./services/UploadServices";
-import PropTypes from 'prop-types';
+import React, { useState } from "react";
 import { makeStyles } from '@material-ui/core/styles';
 import MuiAlert from '@material-ui/lab/Alert';
-import CloseIcon from '@material-ui/icons/Close';
-import { Typography, LinearProgress, Box, Snackbar, IconButton } from '@material-ui/core';
-import Menubar from './Menubar.js';
+import AttachFileIcon from '@material-ui/icons/AttachFile';
+import { Typography, LinearProgress, Box, Snackbar, Button } from '@material-ui/core';
+import Menubar from './Menubar';
 import axios from 'axios';
 
 
@@ -23,8 +21,16 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(3)
   },
   title: {
+    display:'flex',
+    alignItems: 'center',
     marginBottom:20
   },
+  info: {
+    marginBottom:20
+  },
+  file: {
+    marginBottom: 20
+  }
 }));
 
 function LinearProgressWithLabel(props) {
@@ -46,6 +52,10 @@ function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
 
+function NormalAlert(props) {
+  return <MuiAlert {...props} />;
+}
+
 const UploadEmployee = () => {
   const classes = useStyles();
   const [message, setMessage] = useState();
@@ -55,9 +65,9 @@ const UploadEmployee = () => {
   const [status, setStatus] = useState('');
   const [fileSelected, setfileSelected] = useState();
 
-  const handleClick = () => {
+  /*const handleClick = () => {
     setOpen(true);
-  };
+  };*/
 
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {
@@ -120,8 +130,22 @@ const UploadEmployee = () => {
       <main className={classes.content}>
         <div className={classes.toolbar} />
         <Typography variant="h6" noWrap className={classes.title}>
-          Upload CSV
+          <AttachFileIcon />&nbsp;Upload CSV
         </Typography>
+        <NormalAlert severity="info" className={classes.info}>
+          <div>File Allowed: CSV</div><br/>
+          <div>CSV need to contains 4 columns in the following order: <br/>
+                * id - unique employee ID (alphanumeric)<br/>
+                * login - unique employee login (alphanumeric)<br/>
+                * name - employee name<br/>
+                * salary - decimal that is >= 0.0.<br/>
+                First row is for heading information.<br/>
+          </div><br/>
+          <div>
+            Note:<br/>
+            File will be succesfully uploaded if the csv contain 4 columns, but the record will not be updated if there is another record with same ID/login.
+          </div>
+        </NormalAlert>
         <div>
             {
                 loading ? (
@@ -132,14 +156,14 @@ const UploadEmployee = () => {
                     </div>
                 ) : (
                     <form onSubmit={handleUpload}>
-                        <div className="form-group"> 
+                      <div className={classes.file}>
                         <input className="form-control" type="file" accept=".csv" onChange={handleChange} />
-                        </div>
-                        <button className="btn btn-success">Upload</button>
+                      </div>
+                      <Button type="submit" size="medium" variant="contained" color="primary" >Upload</Button>
                     </form>
                 )
             }
-            <Snackbar open={open} autoHideDuration={5000} key={'top center'}
+            <Snackbar open={open} autoHideDuration={4000} key={'top center'}
               anchorOrigin={{ vertical: 'top', horizontal: 'center'}} onClose={handleClose}>
               <Alert onClose={handleClose} severity={status}>
                 {message}
