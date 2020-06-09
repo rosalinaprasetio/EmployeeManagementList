@@ -1,12 +1,14 @@
 ### INFO:
-========
+
+----
 - Backend: NodeJS (localhost port 4000)
 - Frontend: ReactJS (localhost port 3000)
 - Database: MongoDB
 - Test Framework: Mocha
 
 ### HOW TO INSTALL:
-==============
+
+----
 1. Download/clone git repositories
 2. In the terminal, 
    - run "npm install" to install the backend 
@@ -14,19 +16,21 @@
 3. In the terminal, run "npm run dev" to run backend and frontend conccurently. It will automatically open a browser with this url: http://localhost:3000/
 
 ### HOW TO TEST:
-===========
+
+----
 1. If there is a process that is running, click command+C to stop the process.
 2. In the terminal, run "npm test"
 
 
-==============================================================================================
-
+----
 
 ### NOTES:
-======
+
+----
 
 ### UPLOAD FILE:
-===========
+
+----
 Criteria:
 - only allow csv
 - need to contain 4 columns (id,login,name,salary)
@@ -46,7 +50,8 @@ Assumption:
 
 
 ### EMPLOYEES LIST:
-==============
+
+----
 Assumption:
 Frontend:
 1. Show 30 employees per page.
@@ -62,7 +67,8 @@ Backend:
 
 
 ### CRUD:
-====
+
+----
 Assumption:
 Frontend:
 1. When plus sign is clicked, it will open a dialog window that show a form that can be filled (id, login, name, salary). After clicking submit, if successful, database will be updated, dialog window will be closed, and status success will be shown. If unsuccessful, it will show an error.
@@ -72,28 +78,30 @@ Frontend:
 
 
 ### UI LOCALIZATION:
-===============
+
+----
 Assumption: 
 1. Language will be detected based on this order:
-   ['navigator', 'localStorage', 'subdomain', 'queryString', 'htmlTag']
+- ['navigator', 'localStorage', 'subdomain', 'queryString', 'htmlTag']
 2. Translation is located in the client/src/locale folder
 3. Menubar will show current language based on language detection.
 4. When the user change browser language to another language, language in the menubar will follow the language. If there is no translation, it will fall back to English. (tested in chrome)
 
 
 ### API LIST:
-========
-1. Upload CSV
+
+----
+1. Upload CSV  
 Upload   : (POST) http://localhost:4000/users/upload  
-    HTTP multipart form
+- HTTP multipart form
 
-2. Get All Employee
+2. Get All Employee  
 Read     : (GET) http://localhost:4000/users  
-    Example Param: ?minSalary=0&maxSalary=4000&offset=0&limit=30&sort=+name  
+- Example Param: ?minSalary=0&maxSalary=4000&offset=0&limit=30&sort=+name  
 Paginate : (GET) http://localhost:4000/paginate  
-    Example Param: ?page=0&minSalary=0&maxSalary=4000&rowsperpage=30&sort=+name
+- Example Param: ?page=0&minSalary=0&maxSalary=4000&rowsperpage=30&sort=+name
 
-3. CRUD Employee
+3. CRUD Employee  
 Read     : (GET) http://localhost:4000/user/:id  
 Create   : (POST) http://localhost:4000/user/:id  
 Update   : (PATCH) http://localhost:4000/user/:id  
