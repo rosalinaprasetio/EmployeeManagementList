@@ -15,7 +15,7 @@ HOW TO INSTALL:
 
 HOW TO TEST:
 ====
-1. If there is a process that is running, click command+C to stop the process.
+1. If there is a process that is running, click ctrl+C to stop the process.
 2. In the terminal, run "npm test"
 
 
