@@ -52,7 +52,7 @@ Frontend:
 3. User can filter the list by minSalary and maxSalary by adding decimal number to the textfield and click submit.
 4. User can remove the salary filter by clearing the textfield and click submit.
 5. User can sort the list by click on the header (id, login, name, salary)
-6. User can see another page record by clicking arrow > and < in the bottom of the table.
+6. User can see another page by clicking arrow > and < in the bottom of the table.
 
 Backend:
 1. Limit is fixed as 30 and no need to add in the query parameter when calling the api.
@@ -67,6 +67,16 @@ Frontend:
 2. When pencil sign is clicked, it will open a dialog window that show a form that can be edited (login, name, salary). After clicking submit, if successful, database will be updated, dialog window will be closed, and status success will be shown. If unsuccessful, it will show an error.
 3. When trash sign is clicked, it will open a dialog window that show a confirmation for deletion. If 'yes' clicked, data will be removed from database. If 'no' clicked, no changes on the database.
 4. If user close the dialog window in the middle of typing, form will be reset.
+
+
+UI LOCALIZATION:
+===============
+Assumption: 
+1. Language will be detected based on this order:
+   ['navigator', 'localStorage', 'subdomain', 'queryString', 'htmlTag']
+2. Translation is located in the client/src/locale folder
+3. Menubar will show current language based on language detection.
+4. When the user change browser language to another language, language in the menubar will follow the language. If there is no translation, it will fall back to English. (tested in chrome)
 
 
 API LIST:

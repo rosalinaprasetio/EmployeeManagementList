@@ -5,6 +5,7 @@ import AttachFileIcon from '@material-ui/icons/AttachFile';
 import { Typography, LinearProgress, Box, Snackbar, Button } from '@material-ui/core';
 import Menubar from './Menubar';
 import axios from 'axios';
+import { useTranslation } from 'react-i18next';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -57,6 +58,7 @@ function NormalAlert(props) {
 }
 
 const UploadEmployee = () => {
+  const { t } = useTranslation();
   const classes = useStyles();
   const [message, setMessage] = useState();
   const [loading, setLoading] = useState(false);
@@ -124,7 +126,7 @@ const UploadEmployee = () => {
       <main className={classes.content}>
         <div className={classes.toolbar} />
         <Typography variant="h6" noWrap className={classes.title}>
-          <AttachFileIcon />&nbsp;Upload CSV
+          <AttachFileIcon />&nbsp;{t('uploadcsv.title')}
         </Typography>
         <NormalAlert severity="info" className={classes.info}>
           <div>File Allowed: CSV</div><br/>
@@ -153,7 +155,7 @@ const UploadEmployee = () => {
                       <div className={classes.file}>
                         <input className="form-control" type="file" accept=".csv" onChange={handleChange} />
                       </div>
-                      <Button type="submit" size="medium" variant="contained" color="primary" >Upload</Button>
+                      <Button type="submit" size="medium" variant="contained" color="primary" >{t('uploadcsv.button')}</Button>
                     </form>
                 )
             }

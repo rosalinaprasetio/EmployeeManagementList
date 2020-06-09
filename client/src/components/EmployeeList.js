@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import EmployeeServices from "./services/EmployeeServices";
-import PropTypes from 'prop-types';
 import { makeStyles, withStyles, useTheme } from '@material-ui/core/styles';
 import Alert from '@material-ui/lab/Alert';
 import PeopleAltIcon from '@material-ui/icons/PeopleAlt';
@@ -16,56 +15,7 @@ import Menubar from './Menubar'
 import EditEmployee from './EditEmployee';
 import AddEmployee from './AddEmployee';
 import DeleteEmployee from './DeleteEmployee';
-
-const headCells = [
-  { id: 'id', numeric: false, disablePadding: false, label: 'ID' },
-  { id: 'login', numeric: false, disablePadding: false, label: 'Login' },
-  { id: 'name', numeric: false, disablePadding: false, label: 'Name' },
-  { id: 'salary', numeric: true, disablePadding: false, label: 'Salary' },
-];
-
-function EnhancedTableHead(props) {
-  const { classes, order, orderBy, onRequestSort } = props;
-  const createSortHandler = (property) => (event) => {
-    onRequestSort(event, property);
-  };
-
-  return (
-    <TableHead>
-      <TableRow>
-        {headCells.map((headCell) => (
-          <TableCell
-            key={headCell.id}
-            align={headCell.numeric ? 'left' : 'left'}
-            padding={headCell.disablePadding ? 'none' : 'default'}
-            sortDirection={orderBy === headCell.id ? order : false}
-          >
-            <TableSortLabel
-              active={orderBy === headCell.id}
-              direction={orderBy === headCell.id ? order : 'asc'}
-              onClick={createSortHandler(headCell.id)}
-            >
-              {headCell.label}
-              {orderBy === headCell.id ? (
-                <span className={classes.visuallyHidden}>
-                  {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
-                </span>
-              ) : null}
-            </TableSortLabel>
-          </TableCell>
-        ))}
-         <TableCell>Action</TableCell>
-      </TableRow>
-    </TableHead>
-  );
-}
-
-EnhancedTableHead.propTypes = {
-  classes: PropTypes.object.isRequired,
-  onRequestSort: PropTypes.func.isRequired,
-  order: PropTypes.oneOf(['asc', 'desc']).isRequired,
-  orderBy: PropTypes.string.isRequired,
-};
+import { useTranslation } from 'react-i18next';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -145,6 +95,7 @@ const DialogTitle = withStyles(styles)((props) => {
 
 
 const EmployeeList = () => {
+  const { t } = useTranslation();
   const classes = useStyles();
   const [open, setOpen] = useState(false);
   const [employees, setEmployees] = useState([]);
@@ -162,6 +113,49 @@ const EmployeeList = () => {
   const [clickParam, setClickParam] = useState();
   const [snackOpen, setSnackOpen] = useState(false);
   const [snackMessage, setSnackMessage] = useState();
+
+  const headCells = [
+    { id: 'id', numeric: false, disablePadding: false, label: t('dashboard.t_id') },
+    { id: 'login', numeric: false, disablePadding: false, label: t('dashboard.t_login') },
+    { id: 'name', numeric: false, disablePadding: false, label: t('dashboard.t_name') },
+    { id: 'salary', numeric: true, disablePadding: false, label: t('dashboard.t_salary') },
+  ];
+  
+  function EnhancedTableHead(props) {
+    const { classes, order, orderBy, onRequestSort } = props;
+    const createSortHandler = (property) => (event) => {
+      onRequestSort(event, property);
+    };
+  
+    return (
+      <TableHead>
+        <TableRow>
+          {headCells.map((headCell) => (
+            <TableCell
+              key={headCell.id}
+              align={headCell.numeric ? 'left' : 'left'}
+              padding={headCell.disablePadding ? 'none' : 'default'}
+              sortDirection={orderBy === headCell.id ? order : false}
+            >
+              <TableSortLabel
+                active={orderBy === headCell.id}
+                direction={orderBy === headCell.id ? order : 'asc'}
+                onClick={createSortHandler(headCell.id)}
+              >
+                {headCell.label}
+                {orderBy === headCell.id ? (
+                  <span className={classes.visuallyHidden}>
+                    {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                  </span>
+                ) : null}
+              </TableSortLabel>
+            </TableCell>
+          ))}
+           <TableCell>Action</TableCell>
+        </TableRow>
+      </TableHead>
+    );
+  }
 
   const resptheme = useTheme();
   const fullScreen = useMediaQuery(resptheme.breakpoints.down('xs'));
@@ -359,7 +353,7 @@ const EmployeeList = () => {
       <main className={classes.content}>
         <div className={classes.toolbar} />
         <Typography variant="h6" noWrap className={classes.title}>
-          <PeopleAltIcon />&nbsp;Employee List&nbsp;
+          <PeopleAltIcon />&nbsp;{t('dashboard.title')}&nbsp;
           <IconButton onClick={() => handleClickOpen('add')} >
             <LibraryAddIcon style={{ color: '#000080' }}/>
           </IconButton>
@@ -371,7 +365,7 @@ const EmployeeList = () => {
           <div>To search by all salary, clear the decimal number in "Min Salary" and "Max Salary" and click Submit</div>
         </Alert>
         <form className={classes.form} noValidate autoComplete="off" onSubmit={handleSubmitSalary}>
-          <FormLabel component="legend">Search By:</FormLabel>
+          <FormLabel component="legend">{t('dashboard.search')}:</FormLabel>
           <TextField error={errorMinSalary ? true : false} size="small" 
             color="primary" id='min-salary' label="Min Salary" value={minSalary}
             InputProps={{startAdornment: (<InputAdornment position="start">$</InputAdornment>)}}
@@ -380,7 +374,7 @@ const EmployeeList = () => {
             color="primary" id='max-salary' label="Max Salary" value={maxSalary}
             InputProps={{startAdornment: (<InputAdornment position="start">$</InputAdornment>)}}
             variant="outlined" helperText={errorMaxSalary} onChange={handleChangeMaxSalary} />
-          <Button type="submit" size="medium" variant="contained" color="primary" >Submit</Button>
+          <Button type="submit" size="medium" variant="contained" color="primary" >{t('dashboard.button')}</Button>
         </form>
         <TableContainer component={Paper}>
           <Table

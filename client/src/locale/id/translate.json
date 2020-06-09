@@ -1,0 +1,23 @@
+{
+    "translations": {
+        "menu": {
+            "home": "Beranda",
+            "upload": "Unggah CSV"
+        },
+        "dashboard": {
+            "title": "Daftar Pegawai",
+            "search": "Cari",
+            "minsalary": "Min Gaji",
+            "maxSalary": "Maks Gaji",
+            "t_id": "ID",
+            "t_login": "Login",
+            "t_name": "Nama",
+            "t_salary": "Gaji",
+            "button": "Kirim"
+        },
+        "uploadcsv": {
+            "title": "Unggah CSV",
+            "button": "Unggah"
+        }
+    }
+}

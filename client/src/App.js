@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import Home from './components/Home';
 
@@ -6,7 +6,9 @@ function App() {
   return (
     <BrowserRouter>
       <div className="App">
-        <Home />
+        <Suspense fallback={(<div>Loading</div>)}>
+          <Home />
+        </Suspense>
       </div>
     </BrowserRouter>
   );

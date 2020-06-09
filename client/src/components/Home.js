@@ -4,18 +4,18 @@ import EmployeeList from "./EmployeeList";
 import UploadEmployee from "./UploadEmployee";
 
 const Home = () => {
-    return (
+  return (
     <Router>
-        <div>
-          <div className="container mt-3">
-            <Switch>
-              <Route exact path="/" component={EmployeeList} />
-              <Route exact path="/upload" component={UploadEmployee} />
-            </Switch>
-          </div>
+      <div>
+        <div className="container mt-3">
+          <Switch>
+            <Route exact path="/" component={EmployeeList} />
+            <Route exact path="/upload" component={UploadEmployee} />
+          </Switch>
         </div>
-      </Router>
-      );
+      </div>
+    </Router>
+    );
 }
  
 export default Home;

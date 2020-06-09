@@ -1,0 +1,23 @@
+{
+    "translations": {
+        "menu": {
+            "home": "Home",
+            "upload": "Upload CSV"
+        },
+        "dashboard": {
+            "title": "Employee List",
+            "search": "Search By",
+            "minsalary": "Min Salary",
+            "maxSalary": "Max Salary",
+            "t_id": "ID",
+            "t_login": "Login",
+            "t_name": "Name",
+            "t_salary": "Salary",
+            "button": "Submit"
+        },
+        "uploadcsv": {
+            "title": "Upload CSV",
+            "button": "Upload"
+        }
+    }
+}
