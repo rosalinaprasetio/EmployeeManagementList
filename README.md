@@ -39,14 +39,14 @@ Assumption:
    - if id NOT exist and login NOT used by another record in DB, record will be created.
    - if id exist and login NOT used by another record in DB, record will be updated.
    - if id NOT exist and login used by another record in DB, record will NOT be created.
-   - if id exist and login used by another record in DB, record will NOT be updated.
+   - if id exist and login used by another record in DB, record will NOT be updated.  
    Note: After successful upload, it will show how many records updated and how many not updated based on the assumption.
 3. Concurrent upload not allowed (there will be a warning to show that another file is being uploaded).
 
 
 EMPLOYEES LIST:
 ====
-Assumption:
+Assumption:  
 Frontend:
 1. Show 30 employees per page.
 2. Default will be showing employees list with all salary and sort by id.
@@ -62,7 +62,7 @@ Backend:
 
 CRUD:
 ====
-Assumption:
+Assumption:  
 Frontend:
 1. When plus sign is clicked, it will open a dialog window that show a form that can be filled (id, login, name, salary). After clicking submit, if successful, database will be updated, dialog window will be closed, and status success will be shown. If unsuccessful, it will show an error.
 2. When pencil sign is clicked, it will open a dialog window that show a form that can be edited (login, name, salary). After clicking submit, if successful, database will be updated, dialog window will be closed, and status success will be shown. If unsuccessful, it will show an error.
@@ -73,8 +73,8 @@ Frontend:
 UI LOCALIZATION:
 ====
 Assumption: 
-1. Language will be detected based on this order:
-- ['navigator', 'localStorage', 'subdomain', 'queryString', 'htmlTag']
+1. Language will be detected based on this order:  
+['navigator', 'localStorage', 'subdomain', 'queryString', 'htmlTag']
 2. Translation is located in the client/src/locale folder
 3. Menubar will show current language based on language detection.
 4. When the user change browser language to another language, language in the menubar will follow the language. If there is no translation, it will fall back to English. (tested in chrome)
@@ -84,13 +84,13 @@ API LIST:
 ====
 1. Upload CSV  
 Upload   : (POST) http://localhost:4000/users/upload  
-- HTTP multipart form
+HTTP multipart form
 
 2. Get All Employee  
 Read     : (GET) http://localhost:4000/users  
-- Example Param: ?minSalary=0&maxSalary=4000&offset=0&limit=30&sort=+name  
+Example Param: ?minSalary=0&maxSalary=4000&offset=0&limit=30&sort=+name  
 Paginate : (GET) http://localhost:4000/paginate  
-- Example Param: ?page=0&minSalary=0&maxSalary=4000&rowsperpage=30&sort=+name
+Example Param: ?page=0&minSalary=0&maxSalary=4000&rowsperpage=30&sort=+name
 
 3. CRUD Employee  
 Read     : (GET) http://localhost:4000/user/:id  
