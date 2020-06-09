@@ -1,8 +1,6 @@
 const multer = require("multer");
 const express = require("express");
-const path = require("path");
 const router = express.Router();
-const config = require('config');
 const fs = require("fs");
 const csv = require('fast-csv');
 const Employee = require('../../models/Employee');
@@ -13,7 +11,7 @@ const upload = multer({
     dest: 'tmp/csv/',
     fileFilter: (req, file, cb) => {
         if (file.mimetype !== 'text/csv') {
-          return cb(null, false, new Error("Only csv file is allowed."));
+          return cb(null, false, new Error("Upload failed. Only csv file is allowed."));
         }
         cb(null, true);
       }
@@ -120,7 +118,6 @@ router.post('/', function (req, res) {
               //console.log(fileRows);
 
               //save to db
-              var errormessage = '';
               var successcount = 0;
               var errorcount = 0;
 
@@ -149,13 +146,11 @@ router.post('/', function (req, res) {
 
               Promise.all(promiseArr)
               .then((result) => {
-                //console.log(successcount, errorcount);
                 if (req.file) fs.unlinkSync(req.file.path);   // remove temp file
                 lockedupload = false;
                 return res.status(200).json({ message: `Upload successful. ${successcount} updated, ${errorcount} not updated.` })
               })
               .catch(err => { 
-                //console.log(err);
                 if (req.file) fs.unlinkSync(req.file.path);   // remove temp file
                 lockedupload = false;
                 return res.status(400).json({ error: "Upload failed. Database error." });
@@ -165,7 +160,6 @@ router.post('/', function (req, res) {
         })
       }
       catch(err) {
-        //console.log(err);
         if (req.file) fs.unlinkSync(req.file.path);   // remove temp file
         lockedupload = false;
         return res.status(400).json({ error: "Upload failed. Only csv file is allowed." });

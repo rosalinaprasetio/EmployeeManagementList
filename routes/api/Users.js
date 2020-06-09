@@ -4,7 +4,7 @@ const router = express.Router();
 const Employee = require('../../models/Employee');
 
 //@route  GET /
-//@desc   Get all employee
+//@desc   Get all employees
 router.get('/', (req, res) => {
     var err;
     if (!req.query.minSalary || !req.query.maxSalary || !req.query.offset || !req.query.sort) {
@@ -18,8 +18,6 @@ router.get('/', (req, res) => {
         let offset = req.query.offset.trim();
         let rsort = req.query.sort.trim();
 
-        //console.log(rsort);
-        //console.log(/^[+-]{1}(id|name|login|salary)$/.test(rsort));
         if (isNaN(Number(minSalary)) || isNaN(Number(maxSalary))) {
             err = new Error("minSalary and maxSalary should be decimal.");
         }
@@ -54,20 +52,17 @@ router.get('/', (req, res) => {
             
             const sortObj = {};
             sortObj[sortfield] = sortsymbol;
-            //console.log(sortObj);
 
             //query
             const queryObj = {};
             queryObj["salary"] = {};
             queryObj["salary"]["$gte"] = parseFloat(minSalary);
             queryObj["salary"]["$lte"] = parseFloat(maxSalary);
-            //console.log(queryObj);
 
             //offset limit
             const offlimitObj = {};
             offlimitObj["limit"] = 30;
             offlimitObj["skip"] = parseInt(offset);
-            //console.log(offlimitObj);
 
             Employee.find(queryObj, '-_id -__v', offlimitObj)
             .sort(sortObj)

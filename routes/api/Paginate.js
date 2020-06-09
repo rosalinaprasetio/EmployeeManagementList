@@ -22,7 +22,6 @@ router.get('/', (req, res, next) => {
       if (pageOptions.maxSalary)
       queryObj["salary"]["$lte"] = parseFloat(pageOptions.maxSalary);
     }
-    //console.log(queryObj);
    
     if (req.query.page) {
       Employee.paginate(
@@ -48,5 +47,4 @@ router.get('/', (req, res, next) => {
     }
   });
   
-
 module.exports = router;

@@ -6,8 +6,8 @@ const http = axios.create({
       }
   });
 
-const getAll = () => {
-  return http.get("http://localhost:4000/users?minSalary=0&maxSalary=9999999999&offset=0&sort=+id");
+const getAll = (minSalary, maxSalary, offset, sort) => {
+  return http.get(`http://localhost:4000/users?minSalary=${minSalary}&maxSalary=${maxSalary}&offset=${offset}&sort=${sort}`);
 };
 
 const getPagination = (page, rowsperpage, sort, minSalary, maxSalary) => {
@@ -38,17 +38,6 @@ const remove = id => {
   return http.delete(`http://localhost:4000/user/${id}`);
 };
 
-/*
-
-
-const removeAll = () => {
-  return http.delete(`/users`);
-};
-
-const findByTitle = title => {
-  return http.get(`/users?title=${title}`);
-};
-*/
 export default {
   getAll,
   getPagination,

@@ -67,7 +67,6 @@ router.post('/:id', (req, res) => {
 //@desc   Update an employee
 router.patch('/:id', (req, res) => {
     var err;
-    //console.log(req);
     if (!req.params.id || !req.body.login || !req.body.name || !req.body.salary) {
         err = new Error("Some parameter are missing. Please ensure you have employee id, login, name, and salary.");
         return res.status(400).json({ error: err.message });

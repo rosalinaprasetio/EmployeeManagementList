@@ -9,7 +9,6 @@ const app = express();
 //server is 4000 and client is 3000
 app.use(cors());  
 
-//BodyParser middleware
 app.use(express.json());
 
 //DB config

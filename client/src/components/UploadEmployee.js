@@ -65,10 +65,6 @@ const UploadEmployee = () => {
   const [status, setStatus] = useState('');
   const [fileSelected, setfileSelected] = useState();
 
-  /*const handleClick = () => {
-    setOpen(true);
-  };*/
-
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {
       return;
@@ -97,7 +93,6 @@ const UploadEmployee = () => {
           },
       })
       .then(res => {
-          //console.log(res);
           setLoading(false);
           setStatus('success');
           setMessage(res.data.message);
@@ -106,7 +101,6 @@ const UploadEmployee = () => {
           setfileSelected();
       })
       .catch(err => {
-          //console.log(err.response)
           setLoading(false);
           setStatus('error');
           setMessage(err.response.data.error);
