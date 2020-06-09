@@ -1,36 +1,31 @@
-### INFO:
-
-----
+INFO:
+====
 - Backend: NodeJS (localhost port 4000)
 - Frontend: ReactJS (localhost port 3000)
 - Database: MongoDB
 - Test Framework: Mocha
 
-### HOW TO INSTALL:
-
-----
+HOW TO INSTALL:
+====
 1. Download/clone git repositories
 2. In the terminal, 
    - run "npm install" to install the backend 
    - run "npm run client-install" to install the frontend
 3. In the terminal, run "npm run dev" to run backend and frontend conccurently. It will automatically open a browser with this url: http://localhost:3000/
 
-### HOW TO TEST:
-
-----
+HOW TO TEST:
+====
 1. If there is a process that is running, click command+C to stop the process.
 2. In the terminal, run "npm test"
 
 
 ----
 
-### NOTES:
+NOTES:
+====
 
-----
-
-### UPLOAD FILE:
-
-----
+UPLOAD FILE:
+====
 Criteria:
 - only allow csv
 - need to contain 4 columns (id,login,name,salary)
@@ -49,9 +44,8 @@ Assumption:
 3. Concurrent upload not allowed (there will be a warning to show that another file is being uploaded).
 
 
-### EMPLOYEES LIST:
-
-----
+EMPLOYEES LIST:
+====
 Assumption:
 Frontend:
 1. Show 30 employees per page.
@@ -66,9 +60,8 @@ Backend:
 2. Sorting can be asc or desc (e.g for asc: "sort=+name" or "sort=name"; e.g for desc: "sort=-name")
 
 
-### CRUD:
-
-----
+CRUD:
+====
 Assumption:
 Frontend:
 1. When plus sign is clicked, it will open a dialog window that show a form that can be filled (id, login, name, salary). After clicking submit, if successful, database will be updated, dialog window will be closed, and status success will be shown. If unsuccessful, it will show an error.
@@ -77,9 +70,8 @@ Frontend:
 4. If user close the dialog window in the middle of typing, form will be reset.
 
 
-### UI LOCALIZATION:
-
-----
+UI LOCALIZATION:
+====
 Assumption: 
 1. Language will be detected based on this order:
 - ['navigator', 'localStorage', 'subdomain', 'queryString', 'htmlTag']
@@ -88,9 +80,8 @@ Assumption:
 4. When the user change browser language to another language, language in the menubar will follow the language. If there is no translation, it will fall back to English. (tested in chrome)
 
 
-### API LIST:
-
-----
+API LIST:
+====
 1. Upload CSV  
 Upload   : (POST) http://localhost:4000/users/upload  
 - HTTP multipart form
