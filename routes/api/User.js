@@ -7,8 +7,8 @@ const Employee = require('../../models/Employee');
 //@desc   Get an employee
 router.get('/:id', (req, res) => {
     Employee.find({ id: req.params.id }, '-_id -__v')
-    .then(data => res.json({ results: data}))
-    .catch(error => res.status(404).json({success:false, error}))
+    .then(data => res.json({ id:data[0].id, login:data[0].login, name:data[0].name, salary:data[0].salary }))
+    .catch(error => res.status(400).json({success:false, error}))
 })
 
 //@route  POST /:id
@@ -58,7 +58,7 @@ router.post('/:id', (req, res) => {
             .then(data => {
                 res.json({ id:data.id, login:data.login, name:data.name, salary:data.salary })
             })
-            .catch(error => res.status(404).json({success:false, error:"ID/Login has been used by another user. Please ensure you have unique id/login field."}))
+            .catch(error => res.status(400).json({success:false, error:"ID/Login has been used by another user. Please ensure you have unique id/login field."}))
         }
     }
 })
@@ -109,7 +109,7 @@ router.patch('/:id', (req, res) => {
             .then(data => {
                 res.json({ id:data.id, login:data.login, name:data.name, salary:data.salary })
             })
-            .catch(error => res.status(404).json({success:false, error:"Login has been used by another user. Please ensure you have unique login field."}))
+            .catch(error => res.status(400).json({success:false, error:"Login has been used by another user. Please ensure you have unique login field."}))
         }
     }
 })
@@ -124,7 +124,7 @@ router.delete('/:id', (req, res) => {
             res.json({ id:data.id, login:data.login, name:data.name, salary:data.salary })
         })
     )
-    .catch(err => res.status(404).json({success:false, err:"Failed deleting employee."}))
+    .catch(err => res.status(400).json({success:false, err:"Failed deleting employee."}))
 })
 
 module.exports = router;

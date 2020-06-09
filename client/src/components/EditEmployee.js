@@ -35,9 +35,9 @@ const EditEmployee = ({employeeid, handleEditSubmit}) => {
 
   const retrieveOneEmployee = async () => {
     const response = await EmployeeServices.get(employeeid);
-    setName(response.data.results[0].name);
-    setLogin(response.data.results[0].login);
-    setSalary(response.data.results[0].salary.toString());
+    setName(response.data.name);
+    setLogin(response.data.login);
+    setSalary(response.data.salary.toString());
   };
 
   const handleChange = (e, property) => {

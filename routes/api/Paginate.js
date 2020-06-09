@@ -7,11 +7,11 @@ const Employee = require('../../models/Employee');
 //@desc   Pagination
 router.get('/', (req, res, next) => {
     let pageOptions = {
-      page: parseInt(req.query.page.trim()) || 0,
-      limit: parseInt(req.query.rowsperpage.trim()) || 2,
-      sort: req.query.sort.trim() || 'id',
-      minSalary:req.query.minSalary.toString().trim(),
-      maxSalary:req.query.maxSalary.toString().trim(),
+      page: parseInt(req.query.page) || 0,
+      limit: parseInt(req.query.rowsperpage) || 5,
+      sort: req.query.sort || 'id',
+      minSalary:req.query.minSalary,
+      maxSalary:req.query.maxSalary,
     };
 
     const queryObj = {};

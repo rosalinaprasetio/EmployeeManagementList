@@ -6,7 +6,6 @@ const Employee = require('../../models/Employee');
 //@route  GET /
 //@desc   Get all employee
 router.get('/', (req, res) => {
-    let limit = 30; 
     var err;
     if (!req.query.minSalary || !req.query.maxSalary || !req.query.offset || !req.query.sort) {
         err = new Error("Some query parameter are missing. Please ensure you have minSalary, maxSalary, offset, and sort in your query paramater.");

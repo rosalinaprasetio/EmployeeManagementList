@@ -23,18 +23,18 @@ var lockedupload;
 router.post('/', function (req, res) {    
   upload(req, res, function (err) {
     if (err instanceof multer.MulterError) {
-      fs.unlinkSync(req.file.path);   // remove temp file
+      if (req.file) fs.unlinkSync(req.file.path);   // remove temp file
       lockedupload = false;
       return res.status(400).json({ error: err });
     } else if (err) {
-      fs.unlinkSync(req.file.path);   // remove temp file
+      if (req.file) fs.unlinkSync(req.file.path);   // remove temp file
       lockedupload = false;
       return res.status(400).json({ error: err });
     }
       
     if (lockedupload) {
-      fs.unlinkSync(req.file.path);   // remove temp file
-      return res.status(401).json({ error: 'Another file has been uploaded. Please wait a few seconds.' })
+      if (req.file) fs.unlinkSync(req.file.path);   // remove temp file
+      return res.status(401).json({ error: 'Another file is being uploaded. Please wait a few moment and try again.' })
     }
     else {
       lockedupload = true;
@@ -90,7 +90,7 @@ router.post('/', function (req, res) {
               rowid[data.id] = 1;
             }
             else {
-              err = new Error("Upload failed. Duplicated employee id.");
+              err = new Error("Upload failed. Duplicate employee id.");
               parser.end();
             }
 
@@ -98,7 +98,7 @@ router.post('/', function (req, res) {
               rowlogin[data.login] = 1;
             }
             else {
-              err = new Error("Upload failed. Duplicated employee login.");
+              err = new Error("Upload failed. Duplicate employee login.");
               parser.end();
             }
 
@@ -112,7 +112,7 @@ router.post('/', function (req, res) {
             }
 
             if (err) {
-              fs.unlinkSync(req.file.path);   // remove temp file
+              if (req.file) fs.unlinkSync(req.file.path);   // remove temp file
               lockedupload = false;
               return res.status(400).json({ error: err.message });
             }
@@ -150,13 +150,13 @@ router.post('/', function (req, res) {
               Promise.all(promiseArr)
               .then((result) => {
                 //console.log(successcount, errorcount);
-                fs.unlinkSync(req.file.path);   // remove temp file
+                if (req.file) fs.unlinkSync(req.file.path);   // remove temp file
                 lockedupload = false;
                 return res.status(200).json({ message: `Upload successful. ${successcount} updated, ${errorcount} not updated.` })
               })
               .catch(err => { 
                 //console.log(err);
-                fs.unlinkSync(req.file.path);   // remove temp file
+                if (req.file) fs.unlinkSync(req.file.path);   // remove temp file
                 lockedupload = false;
                 return res.status(400).json({ error: "Upload failed. Database error." });
               })
@@ -166,7 +166,7 @@ router.post('/', function (req, res) {
       }
       catch(err) {
         //console.log(err);
-        fs.unlinkSync(req.file.path);   // remove temp file
+        if (req.file) fs.unlinkSync(req.file.path);   // remove temp file
         lockedupload = false;
         return res.status(400).json({ error: "Upload failed. Only csv file is allowed." });
       }
