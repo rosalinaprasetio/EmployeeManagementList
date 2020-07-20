@@ -5,6 +5,7 @@ import { Divider, Drawer, Hidden, List, ListItem, ListItemIcon,
 import MenuIcon from '@material-ui/icons/Menu';
 import HomeIcon from '@material-ui/icons/Home';
 import PublishIcon from '@material-ui/icons/Publish';
+import PeopleAltIcon from '@material-ui/icons/PeopleAlt';
 import { useTranslation } from 'react-i18next';
 
 const drawerWidth = 240;
@@ -20,7 +21,7 @@ drawer: {
 },
 appBar: {
     zIndex: theme.zIndex.drawer + 1,
-    background: '#000080' 
+    background: '#3f51b5' 
 },
 menuButton: {
     marginRight: theme.spacing(2),
@@ -32,6 +33,7 @@ menuButton: {
 toolbar: theme.mixins.toolbar,
 drawerPaper: {
     width: drawerWidth,
+    background: '#ffffff'
 },
 content: {
     flexGrow: 1,
@@ -59,6 +61,12 @@ language: {
 },
 ml20: {
     marginLeft: 20
+},
+list: {
+    padding:0
+},
+listLink: {
+    padding:15
 }
 }));
 
@@ -92,16 +100,25 @@ const Menubar = () => {
     const drawer = (
         <div>
           <div className={classes.toolbar} />
+          {/*
           <Divider />
-          <List>
-            <ListItemLink href="/">
+          <List className={classes.list} >
+            <ListItemLink href="/" className={classes.listLink}>
               <ListItemIcon><HomeIcon /></ListItemIcon>
               <ListItemText primary={t('menu.home')} />
             </ListItemLink>
           </List>
+          */}
           <Divider />
-          <List>
-            <ListItemLink href="/upload">
+          <List className={classes.list}>
+            <ListItemLink href="/employee" className={classes.listLink}>
+              <ListItemIcon><PeopleAltIcon /></ListItemIcon>
+              <ListItemText primary={t('menu.employee')} />
+            </ListItemLink>
+          </List>
+          <Divider />
+          <List className={classes.list}>
+            <ListItemLink href="/upload" className={classes.listLink}>
               <ListItemIcon><PublishIcon /></ListItemIcon>
               <ListItemText primary={t('menu.upload')} />
             </ListItemLink>
@@ -119,53 +136,53 @@ const Menubar = () => {
     return (
         <div>
             <AppBar position="fixed" className={classes.appBar}>
-            <Toolbar>
-            <IconButton
-                color="inherit"
-                aria-label="open drawer"
-                edge="start"
-                onClick={handleDrawerToggle}
-                className={classes.menuButton}
-            >
-                <MenuIcon />
-            </IconButton>
-            <Typography variant="h6" noWrap >
-                Ros Tech Hunt
-            </Typography>
-            </Toolbar>
-        </AppBar>
-        <nav className={classes.drawer} aria-label="menu">
-            {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
-            <Hidden mdUp implementation="css">
-            <Drawer
-                
-                variant="temporary"
-                anchor={theme.direction === 'rtl' ? 'right' : 'left'}
-                open={mobileOpen}
-                onClose={handleDrawerToggle}
-                classes={{
-                paper: classes.drawerPaper,
-                }}
-                ModalProps={{
-                keepMounted: true, // Better open performance on mobile.
-                }}
-            >
-                {drawer}
-            </Drawer>
-            </Hidden>
-            <Hidden smDown implementation="css">
-            <Drawer
-                classes={{
-                paper: classes.drawerPaper,
-                }}
-                variant="permanent"
-                open
-            >
-                {drawer}
-            </Drawer>
-            </Hidden>
-        </nav>
-      </div>
+                <Toolbar>
+                    <IconButton
+                        color="inherit"
+                        aria-label="open drawer"
+                        edge="start"
+                        onClick={handleDrawerToggle}
+                        className={classes.menuButton}
+                    >
+                        <MenuIcon />
+                    </IconButton>
+                    <Typography variant="h6" noWrap >
+                        Employee Management System
+                    </Typography>
+                </Toolbar>
+            </AppBar>
+            <nav className={classes.drawer} aria-label="menu">
+                {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
+                <Hidden mdUp implementation="css">
+                <Drawer
+                    
+                    variant="temporary"
+                    anchor={theme.direction === 'rtl' ? 'right' : 'left'}
+                    open={mobileOpen}
+                    onClose={handleDrawerToggle}
+                    classes={{
+                    paper: classes.drawerPaper,
+                    }}
+                    ModalProps={{
+                    keepMounted: true, // Better open performance on mobile.
+                    }}
+                >
+                    {drawer}
+                </Drawer>
+                </Hidden>
+                <Hidden smDown implementation="css">
+                <Drawer
+                    classes={{
+                    paper: classes.drawerPaper,
+                    }}
+                    variant="permanent"
+                    open
+                >
+                    {drawer}
+                </Drawer>
+                </Hidden>
+            </nav>
+        </div>
     );
 }
  

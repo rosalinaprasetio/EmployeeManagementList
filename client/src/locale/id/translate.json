@@ -2,9 +2,13 @@
     "translations": {
         "menu": {
             "home": "Beranda",
+            "employee": "List Pegawai",
             "upload": "Unggah CSV"
         },
         "dashboard": {
+            "title": "Dashboard"
+        },
+        "employee": {
             "title": "Daftar Pegawai",
             "search": "Cari",
             "minsalary": "Min Gaji",

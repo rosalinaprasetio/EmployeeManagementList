@@ -3,7 +3,6 @@ import { makeStyles } from '@material-ui/core/styles';
 import MuiAlert from '@material-ui/lab/Alert';
 import AttachFileIcon from '@material-ui/icons/AttachFile';
 import { Typography, LinearProgress, Box, Snackbar, Button } from '@material-ui/core';
-import Menubar from './Menubar';
 import axios from 'axios';
 import { useTranslation } from 'react-i18next';
 
@@ -121,9 +120,7 @@ const UploadEmployee = () => {
   }
 
   return (
-    <div className={classes.root}>
-      <Menubar/>
-      <main className={classes.content}>
+    <>
         <div className={classes.toolbar} />
         <Typography variant="h6" noWrap className={classes.title}>
           <AttachFileIcon />&nbsp;{t('uploadcsv.title')}
@@ -134,7 +131,7 @@ const UploadEmployee = () => {
                 * id - unique employee ID (alphanumeric)<br/>
                 * login - unique employee login (alphanumeric)<br/>
                 * name - employee name<br/>
-                * salary - decimal that is >= 0.0.<br/>
+                * salary - decimal that is more than 0.0<br/>
                 First row is for heading information.<br/>
           </div><br/>
           <div>
@@ -166,8 +163,7 @@ const UploadEmployee = () => {
               </Alert>
             </Snackbar>
         </div>
-      </main>
-    </div>
+    </>
      
   );
 };

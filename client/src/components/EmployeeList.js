@@ -11,7 +11,6 @@ import MuiDialogTitle from '@material-ui/core/DialogTitle';
 import { TableSortLabel, Table, TableHead, TableBody, TableCell, TableContainer, TableFooter, FormLabel,
   TablePagination, TableRow, Paper, Typography, TextField, Button, InputAdornment, IconButton,
   Dialog, useMediaQuery, Snackbar } from '@material-ui/core';
-import Menubar from './Menubar'
 import EditEmployee from './EditEmployee';
 import AddEmployee from './AddEmployee';
 import DeleteEmployee from './DeleteEmployee';
@@ -115,10 +114,10 @@ const EmployeeList = () => {
   const [snackMessage, setSnackMessage] = useState();
 
   const headCells = [
-    { id: 'id', numeric: false, disablePadding: false, label: t('dashboard.t_id') },
-    { id: 'login', numeric: false, disablePadding: false, label: t('dashboard.t_login') },
-    { id: 'name', numeric: false, disablePadding: false, label: t('dashboard.t_name') },
-    { id: 'salary', numeric: true, disablePadding: false, label: t('dashboard.t_salary') },
+    { id: 'id', numeric: false, disablePadding: false, label: t('employee.t_id') },
+    { id: 'login', numeric: false, disablePadding: false, label: t('employee.t_login') },
+    { id: 'name', numeric: false, disablePadding: false, label: t('employee.t_name') },
+    { id: 'salary', numeric: true, disablePadding: false, label: t('employee.t_salary') },
   ];
   
   function EnhancedTableHead(props) {
@@ -348,12 +347,10 @@ const EmployeeList = () => {
   }
 
   return (
-    <div className={classes.root}>
-      <Menubar/>
-      <main className={classes.content}>
+      <>
         <div className={classes.toolbar} />
         <Typography variant="h6" noWrap className={classes.title}>
-          <PeopleAltIcon />&nbsp;{t('dashboard.title')}&nbsp;
+          <PeopleAltIcon />&nbsp;{t('employee.title')}&nbsp;
           <IconButton onClick={() => handleClickOpen('add')} >
             <LibraryAddIcon style={{ color: '#000080' }}/>
           </IconButton>
@@ -365,7 +362,7 @@ const EmployeeList = () => {
           <div>To search by all salary, clear the decimal number in "Min Salary" and "Max Salary" and click Submit</div>
         </Alert>
         <form className={classes.form} noValidate autoComplete="off" onSubmit={handleSubmitSalary}>
-          <FormLabel component="legend">{t('dashboard.search')}:</FormLabel>
+          <FormLabel component="legend">{t('employee.search')}:</FormLabel>
           <TextField error={errorMinSalary ? true : false} size="small" 
             color="primary" id='min-salary' label="Min Salary" value={minSalary}
             InputProps={{startAdornment: (<InputAdornment position="start">$</InputAdornment>)}}
@@ -374,7 +371,7 @@ const EmployeeList = () => {
             color="primary" id='max-salary' label="Max Salary" value={maxSalary}
             InputProps={{startAdornment: (<InputAdornment position="start">$</InputAdornment>)}}
             variant="outlined" helperText={errorMaxSalary} onChange={handleChangeMaxSalary} />
-          <Button type="submit" size="medium" variant="contained" color="primary" >{t('dashboard.button')}</Button>
+          <Button type="submit" size="medium" variant="contained" color="primary" >{t('employee.button')}</Button>
         </form>
         <TableContainer component={Paper}>
           <Table
@@ -441,7 +438,7 @@ const EmployeeList = () => {
             </TableFooter>
           </Table>
         </TableContainer>  
-      </main>
+      
       <Dialog fullScreen={fullScreen} open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
         <DialogTitle id="customized-dialog-title" onClose={handleClose}>
           {(clickAction === 'edit') ? 'Edit' : ((clickAction === 'add') ? 'Add' : 'Delete')} Employee
@@ -460,7 +457,7 @@ const EmployeeList = () => {
           {snackMessage}
         </Alert>
       </Snackbar>
-    </div>
+    </>
     
   );
 };
