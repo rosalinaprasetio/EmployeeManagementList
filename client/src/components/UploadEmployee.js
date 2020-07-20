@@ -88,7 +88,7 @@ const UploadEmployee = () => {
       setLoading(true);
       setStatus('');
 
-      axios.post("http://localhost:4000/users/upload", data, {
+      axios.post("/users/upload", data, {
           onUploadProgress: ProgressEvent => {
             setProgress(ProgressEvent.loaded / ProgressEvent.total*100)
           },
