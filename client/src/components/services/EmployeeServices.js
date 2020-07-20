@@ -7,11 +7,11 @@ const http = axios.create({
   });
 
 const getAll = (minSalary, maxSalary, offset, sort) => {
-  return http.get(`http://localhost:4000/users?minSalary=${minSalary}&maxSalary=${maxSalary}&offset=${offset}&sort=${sort}`);
+  return http.get(`/users?minSalary=${minSalary}&maxSalary=${maxSalary}&offset=${offset}&sort=${sort}`);
 };
 
 const getPagination = (page, rowsperpage, sort, minSalary, maxSalary) => {
-  return http.get("http://localhost:4000/paginate", {
+  return http.get("/paginate", {
     params: {
       page: page,
       rowsperpage: rowsperpage,
@@ -23,19 +23,19 @@ const getPagination = (page, rowsperpage, sort, minSalary, maxSalary) => {
 };
 
 const get = id => {
-  return http.get(`http://localhost:4000/user/${id}`);
+  return http.get(`/user/${id}`);
 };
 
 const update = (id, data) => {
-  return http.patch(`http://localhost:4000/user/${id}`, data);
+  return http.patch(`/user/${id}`, data);
 };
 
 const create = (id, data) => {
-  return http.post(`http://localhost:4000/user/${id}`, data);
+  return http.post(`/user/${id}`, data);
 };
 
 const remove = id => {
-  return http.delete(`http://localhost:4000/user/${id}`);
+  return http.delete(`/user/${id}`);
 };
 
 export default {
